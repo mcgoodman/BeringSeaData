@@ -1,0 +1,21 @@
+Package: Bering10KThredds
+Type: Package
+Title: Download and bias-correct Bering10K ROMS level 2 outputs
+Version: 0.1.0
+Author: Maurice Goodman
+Maintainer: Maurice Goodman <goodman.maurice@gmail.com>
+Description: Query the ACLIM Thredds server for spatially-gridded ("level 2") ROMS outputs
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RdMacros: Rdpack
+Imports:
+    curl,
+    dplyr,
+    lubridate,
+    Rdpack,
+    rvest,
+    sf,
+    stars,
+    stringr
+RoxygenNote: 7.3.2
