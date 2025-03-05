@@ -11,7 +11,7 @@ This package implements functions for browsing, downloading from, and bias-corre
 
 ```{r, eval = FALSE}
 library("devtools")
-install.packages("mcgoodman/Bering10KThredds")
+install_github("mcgoodman/Bering10KThredds")
 ```
 
 ## Useage
