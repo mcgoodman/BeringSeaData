@@ -1,3 +1,5 @@
+# Gridded Bering10K ROMS from the ACLIM Thredds Server
+
 This package implements functions for browsing, downloading from, and bias-corrected outputs from the [NOAA ACLIM Thredds Server](https://data.pmel.noaa.gov/aclim/thredds/catalog/catalog.html) containing hindcasts, future projections, and historical runs of the the [Bering10K ROMS](https://beringnpz.github.io/roms-bering-sea/B10K-dataset-docs/) models for the Bering Sea. Browse available datasets and variables by visiting the Thredds Server or using `list_level2_datasets`. Currently, datasets downloaded from this package are returned as `stars` objects.
 
 ## Installation
@@ -48,13 +50,15 @@ print(temp_ssp585, n = prod(dim(temp_ssp585)))
 
 Plotting, for example, the first week in this dataset:
 
-    library("ggplot2")
-    
-    ggplot() + 
-      geom_stars(aes(fill = temp, color = temp), 
-                 data = slice(temp_ssp585, 1, along = "ocean_time")) + 
-      scale_fill_viridis_c(option = "inferno") + 
-      scale_color_viridis_c(option = "inferno")
+```R
+library("ggplot2")
+
+ggplot() + 
+  geom_stars(aes(fill = temp, color = temp), 
+             data = slice(temp_ssp585, 1, along = "ocean_time")) + 
+  scale_fill_viridis_c(option = "inferno") + 
+  scale_color_viridis_c(option = "inferno")
+```
 
 ![](README_files/figure-markdown_strict/unnamed-chunk-4-1.png)
 
