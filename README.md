@@ -6,8 +6,10 @@ This package implements functions for browsing, downloading from, and bias-corre
 
 `Bering10KThredds` can be installed from GitHub using:
 
-    library("devtools")
-    install.packages("mcgoodman/Bering10KThredds")
+```R
+library("devtools")
+install_github("mcgoodman/Bering10KThredds")
+```
 
 ## Useage
 
@@ -15,14 +17,16 @@ This package implements functions for browsing, downloading from, and bias-corre
 
 The `get_level2` function can be used to download weekly gridded outputs as `stars` objects. E.g., to download SSP5-8.5 projections of bottom temperature for 2040-2060 from the GFDL earth systems model:
 
-    library("Bering10KThredds")
-    
-    var <- "temp_bottom5m"
-    
-    temp_ssp585 <- get_level2(
-      var, start = 2040, end = 2060, 
-      type = "projection", scenario = "SSP585", earth_model = "GFDL"
-    )
+```R
+library("Bering10KThredds")
+
+var <- "temp_bottom5m"
+
+temp_ssp585 <- get_level2(
+  var, start = 2040, end = 2060, 
+  type = "projection", scenario = "SSP585", earth_model = "GFDL"
+)
+```
 
 By default, the outputs are cropped to the shape of the Bering Sea Groundfish Assessment Program survey region, but this be disabled by specifying `crop_ebs = FALSE`. The result is a `stars` object with one band for each week:
 
