@@ -96,10 +96,12 @@ get_level2 <- function(var,
   suppressWarnings(suppressMessages({
     roms <- read_ncdf(file_names[1], var = var_base)
     roms_dates <- st_get_dimension_values(roms, "ocean_time")
-    for (i in 2:length(file_names)) {
-      roms_i <- read_ncdf(file_names[i], var = var_base)
-      roms <- c(roms, roms_i, along = "ocean_time")
-      roms_dates <- c(roms_dates, st_get_dimension_values(roms_i, "ocean_time"))
+    if (length(file_names) > 1) {
+      for (i in 2:length(file_names)) {
+        roms_i <- read_ncdf(file_names[i], var = var_base)
+        roms <- c(roms, roms_i, along = "ocean_time")
+        roms_dates <- c(roms_dates, st_get_dimension_values(roms_i, "ocean_time"))
+      }
     }
     st_crs(roms) <- "+proj=longlat +datum=WGS84 +no_defs"
   }))

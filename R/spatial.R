@@ -62,3 +62,20 @@ get_sediment <- function() {
   phi |> st_warp(crs = "+proj=longlat +datum=WGS84 +no_defs")
 
 }
+
+#' @title Simple function to convert longitude from 0/360 to -180/180 and vice-versa
+#' @param x A numeric vector of longitudes
+#' @param from Whether to convert from -180/180 or 0/360
+#'
+#' @return A numeric vector
+#' @export
+rotate_lon <- function(x, from = c("-180/180", "0/360")) {
+
+  from <- match.arg(from)
+
+  from |> switch(
+    `-180/180` = (x + 360) %% 360,
+    `0/360` = ((x + 180) %% 360) - 180
+  )
+
+}
