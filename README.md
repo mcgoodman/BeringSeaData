@@ -1,9 +1,13 @@
-This package contains functions for downloading and processing: - Survey
-data from the NOAA AFSC Groundfish Assessment Program (GAP) Bering Sea
-survey and other standardized surveys in Alaska waters. - Estimates from
-the MOM6 Northeastern Pacific (NEP) oceangraphic model hindcast -
-Estimates from the Bering 10K ROMS (/ROMS-NPZ) oceanographic model
-including the hindcast, historical runs, and projections
+# Eastern Bering Sea survey and oceanographic data
+
+This package contains functions for downloading and processing:
+
+-   Survey data from the NOAA AFSC Groundfish Assessment Program (GAP)
+    Bering Sea survey and other standardized surveys in Alaska waters.
+-   Estimates from the MOM6 Northeastern Pacific (NEP) oceangraphic
+    model hindcast
+-   Estimates from the Bering 10K ROMS (/ROMS-NPZ) oceanographic model
+    including the hindcast, historical runs, and projections
 
 Currently, MOM6 and ROMS datasets downloaded from this package are
 returned as `stars` objects. The package also contains some other
@@ -48,7 +52,11 @@ passing a different shapefile (as an `sf` object) or bounding box to the
 `extent` argument. E.g., to download monthly bottom temperature for the
 EBS region between 2020 and 2024:
 
-    temp_mom6 <- get_mom6_nep(var = "tob", start_date = as.Date("2020-01-01"), end_date = as.Date("2024-12-31"))
+    temp_mom6 <- get_mom6_nep(
+      var = "tob", 
+      start_date = as.Date("2020-01-01"), 
+      end_date = as.Date("2024-12-31")
+    )
 
 The result is a 3-dimensional `stars` object with a band for each month:
 
