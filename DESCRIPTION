@@ -1,7 +1,7 @@
-Package: Bering10KThredds
+Package: BeringSeaData
 Type: Package
 Title: Download and bias-correct Bering10K ROMS level 2 outputs
-Version: 0.1.0
+Version: 0.2.0
 Author: Maurice Goodman
 Maintainer: Maurice Goodman <goodman.maurice@gmail.com>
 Description: Query the ACLIM Thredds server for spatially-gridded ("level 2") ROMS outputs
@@ -10,6 +10,7 @@ Encoding: UTF-8
 LazyData: true
 RdMacros: Rdpack
 Depends:
+    R (>= 4.1.0),
     sf, 
     stars
 Imports:
@@ -19,7 +20,8 @@ Imports:
     Rdpack,
     rvest,
     stringr, 
-    ncdf4, 
+    ncdf4,
+    tidync,
     jsonlite, 
     httr
 RoxygenNote: 7.3.2

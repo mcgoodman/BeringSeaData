@@ -1,28 +1,66 @@
 ---
-title: "Download and bias-correct Level 2 ROMS output from the ACLIM Thredds Server"
+title: "Functions for downloading and processing AFSC Bering Sea data"
 output: md_document
 ---
 
-This package implements functions for browsing, downloading from, and bias-corrected outputs from the [NOAA ACLIM Thredds Server](https://data.pmel.noaa.gov/aclim/thredds/catalog/catalog.html) containing hindcasts, future projections, and historical runs of the the [Bering10K ROMS](https://beringnpz.github.io/roms-bering-sea/B10K-dataset-docs/) models for the Bering Sea. Browse available datasets and variables by visiting the Thredds Server or using `list_level2_datasets`. Currently, datasets downloaded from this package are returned as `stars` objects.
+```{r, include = FALSE}
+library("BeringSeaData")
+```
+
+This package contains functions for downloading and processing: 
+- Survey data from the NOAA AFSC Groundfish Assessment Program (GAP) Bering Sea survey and other standardized surveys in Alaska waters.
+- Estimates from the MOM6 Northeastern Pacific (NEP) oceangraphic model hindcast
+- Estimates from the Bering 10K ROMS (/ROMS-NPZ) oceanographic model including the hindcast, historical runs, and projections
+
+Currently, MOM6 and ROMS datasets downloaded from this package are returned as `stars` objects. The package also contains some other spatial datasets (bathymetry, sediment grain size, and various shapefiles), as well as utilities for processing `stars` objects.
+
+These functions were written at different times, for different projects, using (necessarily) different APIs, and therefore may not share a cohesive syntax.
 
 ## Installation
 
-`Bering10KThredds` can be installed from GitHub using: 
+`BeringSeaData` can be installed from GitHub using: 
 
 ```{r, eval = FALSE}
 library("devtools")
-install_github("mcgoodman/Bering10KThredds")
+install_github("mcgoodman/BeringSeaData")
 ```
 
-## Useage
+## AFSC GAP survey data
+
+The functions `get_catch`, `get_hauldata`, and `get_species_codes` are wrappers for the GAP API documented [here](https://afsc-gap-products.github.io/gap_products/content/foss-api-r.html). To download, for example, all positive tows for walleye pollock from the EBS (SEBS + NBS) survey, and add in the data for hauls with zero catch, use: 
+
+```{r, eval = FALSE}
+library("BeringSeaData")
+plk_code <- get_species_codes("Gadus chalcogrammus")
+plk_data <- get_catch(plk_code, zero_expand = TRUE, survey = "EBS")
+```
+
+## MOM6 NEP model
+
+Variables from the MOM6 NEP hindcast (listed on the [CEFI Portal](https://psl.noaa.gov/cefi_portal/)) can be downloaded and returned as a `stars` object using `get_mom6_nep`. Available variables for each data category and output frequency can be browsed using the data query generator on the CEFI Portal. 
+
+By default the outputs are cropped to the extent of the EBS survey region, but can be cropped to any region within the NEP model domain by passing a different shapefile (as an `sf` object) or bounding box to the `extent` argument. E.g., to download monthly bottom temperature for the EBS region between 2020 and 2024:
+
+```{r message = FALSE, warning = FALSE, results = "hide"}
+temp_mom6 <- get_mom6_nep(var = "tob", start_date = as.Date("2020-01-01"), end_date = as.Date("2024-12-31"))
+```
+
+The result is a 3-dimensional `stars` object with a band for each month:
+
+```{r}
+# Print summary statistics for all cells
+print(temp_mom6, n = prod(dim(temp_mom6)))
+```
+
+## Bering 10K ROMS model
+
+This package also implements functions for browsing, downloading from, and bias-corrected outputs from the [NOAA ACLIM Thredds Server](https://data.pmel.noaa.gov/aclim/thredds/catalog/catalog.html) containing hindcasts, future projections, and historical runs of the the [Bering10K ROMS](https://beringnpz.github.io/roms-bering-sea/B10K-dataset-docs/) models for the Bering Sea. Browse available datasets and variables by visiting the Thredds Server or using `list_level2_datasets`.
 
 ### Downloading Level 2 ROMs output
 
 The `get_level2` function can be used to download weekly gridded outputs as `stars` objects. E.g., to download SSP5-8.5 projections of bottom temperature for 2040-2060 from the GFDL earth systems model:
 
 ```{r message = FALSE, warning = FALSE, results = "hide"}
-library("Bering10KThredds")
-
 var <- "temp_bottom5m"
 
 temp_ssp585 <- get_level2(
@@ -49,7 +87,6 @@ ggplot() +
   scale_fill_viridis_c(option = "inferno") + 
   scale_color_viridis_c(option = "inferno")
 ```
-
 
 ### Delta bias-correcting ROMs projections
 

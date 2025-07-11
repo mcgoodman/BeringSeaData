@@ -14,7 +14,7 @@ write_ncdf <- function(roms, path, type = c("resampled", "native"), cellsize = 5
 
   if (type == "native") {
 
-    B10K_grid <- ncdf4::nc_open(system.file(package = "Bering10KThredds", "GIS", "Bering10K_extended_grid.nc"))
+    B10K_grid <- ncdf4::nc_open(system.file(package = "BeringSeaData", "GIS", "Bering10K_extended_grid.nc"))
 
     roms_xy <- dplyr::mutate(setNames(roms[,,,1,drop = TRUE], "var"), var = 1)
     coords <- suppressWarnings(sf::st_coordinates(sf::st_centroid(sf::st_as_sf(roms_xy))))

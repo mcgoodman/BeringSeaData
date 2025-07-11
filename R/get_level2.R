@@ -6,9 +6,9 @@
 #' @param scenario "SSP126" or "SSP585" for CMIP6 (`version = "K20P19"` or `version = "K20"`) outputs, "RCP45" or "RCP85" for CMIP5 (`version = "H16"`) outputs
 #' @param start integer start year. NA defaults to all available years.
 #' @param end integer end year. NA defaults to all available years.
-#' @param version Either (1) "K20P19" for 30-layer ROMs model from \insertCite{K20;textual}{Bering10KThredds}, with carbonate dynamics from
-#' \insertCite{P19;textual}{Bering10KThredds} (default), (2) "K20" for 30-layer model without carbonate dynamics, or (3) "H16" for 10-layer
-#' ROMS model from \insertCite{H16;textual}{Bering10KThredds}
+#' @param version Either (1) "K20P19" for 30-layer ROMs model from \insertCite{K20;textual}{BeringSeaData}, with carbonate dynamics from
+#' \insertCite{P19;textual}{BeringSeaData} (default), (2) "K20" for 30-layer model without carbonate dynamics, or (3) "H16" for 10-layer
+#' ROMS model from \insertCite{H16;textual}{BeringSeaData}
 #' @param earth_model "GFDL", "CESM", or "MIROC"
 #' @param crop_ebs if TRUE, crop to EBS/NBS survey boundary
 #' @param write_dir path to write downloaded raster (as GEOTIF). if NA, object is not written to disk.

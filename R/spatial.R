@@ -16,10 +16,10 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
   option <- paste(region, type, sep = "_")
 
   option |> switch(
-    EBS_grid = sf::st_read(system.file(package = "Bering10KThredds", "GIS", "EBS grid"), quiet = TRUE),
-    EBS_boundary = sf::st_read(system.file(package = "Bering10KThredds", "GIS", "EBS boundary"), quiet = TRUE),
-    SEBS_grid = sf::st_read(system.file(package = "Bering10KThredds", "GIS", "SEBS grid"), quiet = TRUE),
-    SEBS_boundary = sf::st_read(system.file(package = "Bering10KThredds", "GIS", "SEBS boundary"), quiet = TRUE)
+    EBS_grid = sf::st_read(system.file(package = "BeringSeaData", "GIS", "EBS grid"), quiet = TRUE),
+    EBS_boundary = sf::st_read(system.file(package = "BeringSeaData", "GIS", "EBS boundary"), quiet = TRUE),
+    SEBS_grid = sf::st_read(system.file(package = "BeringSeaData", "GIS", "SEBS grid"), quiet = TRUE),
+    SEBS_boundary = sf::st_read(system.file(package = "BeringSeaData", "GIS", "SEBS boundary"), quiet = TRUE)
   )
 
 }
@@ -30,7 +30,7 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
 #' @export
 get_ak_coast <- function() {
 
-  sf::st_read(system.file(package = "Bering10KThredds", "GIS", "Alaska Shoreline", "ak_russia.shp"))
+  sf::st_read(system.file(package = "BeringSeaData", "GIS", "Alaska Shoreline", "ak_russia.shp"))
 
 }
 
@@ -40,7 +40,7 @@ get_ak_coast <- function() {
 #' @export
 get_bathymetry <- function() {
 
-  stars::read_stars(system.file(package = "Bering10KThredds", "GIS", "etopo_bedrock_15arcsecond.tif"))
+  stars::read_stars(system.file(package = "BeringSeaData", "GIS", "etopo_bedrock_15arcsecond.tif"))
 
 }
 
@@ -49,7 +49,7 @@ get_bathymetry <- function() {
 #' @export
 get_sediment <- function() {
 
-  phi <- stars::read_stars(system.file(package = "Bering10KThredds", "GIS", "phi.grd"))
+  phi <- stars::read_stars(system.file(package = "BeringSeaData", "GIS", "phi.grd"))
 
   phi |> st_warp(crs = "+proj=longlat +datum=WGS84 +no_defs")
 

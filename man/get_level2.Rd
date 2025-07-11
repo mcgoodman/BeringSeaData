@@ -27,9 +27,9 @@ get_level2(
 
 \item{end}{integer end year. NA defaults to all available years.}
 
-\item{version}{Either (1) "K20P19" for 30-layer ROMs model from \insertCite{K20;textual}{Bering10KThredds}, with carbonate dynamics from
-\insertCite{P19;textual}{Bering10KThredds} (default), (2) "K20" for 30-layer model without carbonate dynamics, or (3) "H16" for 10-layer
-ROMS model from \insertCite{H16;textual}{Bering10KThredds}}
+\item{version}{Either (1) "K20P19" for 30-layer ROMs model from \insertCite{K20;textual}{BeringSeaData}, with carbonate dynamics from
+\insertCite{P19;textual}{BeringSeaData} (default), (2) "K20" for 30-layer model without carbonate dynamics, or (3) "H16" for 10-layer
+ROMS model from \insertCite{H16;textual}{BeringSeaData}}
 
 \item{earth_model}{"GFDL", "CESM", or "MIROC"}
 
