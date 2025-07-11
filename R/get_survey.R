@@ -125,7 +125,7 @@ get_catch <- function(species_code, zero_expand = FALSE, haul_data, survey = c("
     if (missing(haul_data)) {
       haul_data <- get_hauldata(survey = survey)
     } else {
-      haul_data <- haul_data |> dplyr::filter(survey %in% survey_sub)
+      haul_data <- haul_data |> dplyr::filter(srvy %in% survey_sub)
     }
     if (!missing(years)) {
       haul_data <- haul_data |> dplyr::filter(year %in% years)
