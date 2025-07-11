@@ -9,13 +9,17 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 RdMacros: Rdpack
+Depends:
+    sf, 
+    stars
 Imports:
     curl,
     dplyr,
     lubridate,
     Rdpack,
     rvest,
-    sf,
-    stars,
-    stringr
+    stringr, 
+    ncdf4, 
+    jsonlite, 
+    httr
 RoxygenNote: 7.3.2

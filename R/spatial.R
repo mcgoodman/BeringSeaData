@@ -10,8 +10,6 @@
 #' @export
 get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "grid")) {
 
-  require("sf")
-
   region <- match.arg(region)
   type <- match.arg(type)
 
@@ -32,8 +30,6 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
 #' @export
 get_ak_coast <- function() {
 
-  require("sf")
-
   sf::st_read(system.file(package = "Bering10KThredds", "GIS", "Alaska Shoreline", "ak_russia.shp"))
 
 }
@@ -44,8 +40,6 @@ get_ak_coast <- function() {
 #' @export
 get_bathymetry <- function() {
 
-  require("stars")
-
   stars::read_stars(system.file(package = "Bering10KThredds", "GIS", "etopo_bedrock_15arcsecond.tif"))
 
 }
@@ -54,8 +48,6 @@ get_bathymetry <- function() {
 #' @return A "stars" object
 #' @export
 get_sediment <- function() {
-
-  require("stars")
 
   phi <- stars::read_stars(system.file(package = "Bering10KThredds", "GIS", "phi.grd"))
 
