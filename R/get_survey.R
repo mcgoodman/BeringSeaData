@@ -99,7 +99,7 @@ get_species_codes <- function(sciname) {
 #' @inheritParams get_hauldata
 #' @param species_code AKFIN species code returned by `get_species_code` (length 1)
 #' @param zero_expand Whether to add in implicit zeroes (TRUE) or return only hauls with positive catch (FALSE)
-#' @param haul_data Haul data returned by `get_hauldata`. If `zero_expand` is TRUE and `haul_data` is NA,
+#' @param haul_data Haul data returned by `get_hauldata`. If `zero_expand` is TRUE and `haul_data` is missing,
 #' data corresponding to the `survey` argument will be downloaded, however if calling `get_catch` multiple times
 #' for different species, it is more efficient to download the haul data first and pass it to each `get_catch` call.
 #' @param years Years to subset data to. If missing, returns all years.
@@ -107,7 +107,7 @@ get_species_codes <- function(sciname) {
 #' @returns A data.frame
 #' @export
 #'
-get_catch <- function(species_code, zero_expand = FALSE, haul_data = NA, survey = c("All", "EBS", "SEBS", "NBS", "EBS Slope", "AI", "GOA"), years) {
+get_catch <- function(species_code, zero_expand = FALSE, haul_data, survey = c("All", "EBS", "SEBS", "NBS", "EBS Slope", "AI", "GOA"), years) {
 
   survey <- match.arg(survey)
 
@@ -122,7 +122,7 @@ get_catch <- function(species_code, zero_expand = FALSE, haul_data = NA, survey 
   )
 
   if (isTRUE(zero_expand)) {
-    if (is.na(haul_data)) {
+    if (missing(haul_data)) {
       haul_data <- get_hauldata(survey = survey)
     } else {
       haul_data <- haul_data |> dplyr::filter(survey %in% survey_sub)
