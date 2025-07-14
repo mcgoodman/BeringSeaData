@@ -2,6 +2,7 @@
 % Please edit documentation in R/stars_utilities.R
 \name{st_as_stars.tidync}
 \alias{st_as_stars.tidync}
+\alias{st_as_stars}
 \title{Convert tidync object to `stars`}
 \source{
 <https://github.com/ropensci/tidync/issues/68>

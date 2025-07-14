@@ -66,6 +66,10 @@ st_replicate <- function(x, name, values = 1, ...) {
 #'
 #' @return A `stars` object
 #' @source <https://github.com/ropensci/tidync/issues/68>
+#'
+#' @importFrom stars st_as_stars
+#' @method st_as_stars tidync
+#' @aliases st_as_stars
 #' @export
 st_as_stars.tidync <- function(x) {
 
@@ -75,7 +79,7 @@ st_as_stars.tidync <- function(x) {
   ## this needs to be a bit easier ...
   transforms <- tidync:::active_axis_transforms(x)
   dims <- lapply(names(transforms), function(trname) {
-    transform <- transforms[[trname]] %>% dplyr::filter(selected)
+    transform <- transforms[[trname]] |> dplyr::filter(selected)
     values <- transform[[trname]]
     if (length(values) > 1) {
       stars:::create_dimension(

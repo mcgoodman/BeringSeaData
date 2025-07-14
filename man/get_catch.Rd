@@ -7,7 +7,7 @@
 get_catch(
   species_code,
   zero_expand = FALSE,
-  haul_data = NA,
+  haul_data,
   survey = c("All", "EBS", "SEBS", "NBS", "EBS Slope", "AI", "GOA"),
   years
 )
@@ -17,7 +17,7 @@ get_catch(
 
 \item{zero_expand}{Whether to add in implicit zeroes (TRUE) or return only hauls with positive catch (FALSE)}
 
-\item{haul_data}{Haul data returned by `get_hauldata`. If `zero_expand` is TRUE and `haul_data` is NA,
+\item{haul_data}{Haul data returned by `get_hauldata`. If `zero_expand` is TRUE and `haul_data` is missing,
 data corresponding to the `survey` argument will be downloaded, however if calling `get_catch` multiple times
 for different species, it is more efficient to download the haul data first and pass it to each `get_catch` call.}
 
