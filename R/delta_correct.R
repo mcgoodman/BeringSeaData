@@ -16,13 +16,13 @@ weight_weeks <- function(x, start = NA, end = NA) {
       if(!(start == as.integer(start))) stop("start should be an integer year")
       start_date <- as.POSIXct(paste0(start, "-01-01 00:00:00"), tz = "UTC")
       dates_in <- which(stars::st_get_dimension_values(x, "ocean_time") >= start_date)
-      x <- x |> slice(dates_in, along = "ocean_time")
+      x <- x |> dplyr::slice(dates_in, along = "ocean_time")
     }
     if (!is.na(end)) {
       if(!(end == as.integer(end))) stop("end should be an integer year")
       end_date <- as.POSIXct(paste0(end, "-12-31 23:59:00"), tz = "UTC")
       dates_in <- which(stars::st_get_dimension_values(x, "ocean_time") <= end_date)
-      x <- x |> slice(dates_in, along = "ocean_time")
+      x <- x |> dplyr::slice(dates_in, along = "ocean_time")
     }
   }
 

@@ -4,7 +4,7 @@
 \alias{st_replicate}
 \title{Expand a 2-dimensional `stars` object over time}
 \usage{
-st_replicate(x, name, values = 1, ...)
+st_replicate(x, name, values = 1:2)
 }
 \arguments{
 \item{x}{2-dimensional `stars` object}

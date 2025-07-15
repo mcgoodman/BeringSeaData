@@ -16,10 +16,10 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
   option <- paste(region, type, sep = "_")
 
   option |> switch(
-    EBS_grid = sf::st_read(system.file(package = "BeringSeaData", "GIS", "EBS grid"), quiet = TRUE),
-    EBS_boundary = sf::st_read(system.file(package = "BeringSeaData", "GIS", "EBS boundary"), quiet = TRUE),
-    SEBS_grid = sf::st_read(system.file(package = "BeringSeaData", "GIS", "SEBS grid"), quiet = TRUE),
-    SEBS_boundary = sf::st_read(system.file(package = "BeringSeaData", "GIS", "SEBS boundary"), quiet = TRUE)
+    EBS_grid = sf::st_read(system.file(package = "BeringSeaData", "GIS", "EBS_grid"), quiet = TRUE),
+    EBS_boundary = sf::st_read(system.file(package = "BeringSeaData", "GIS", "EBS_boundary"), quiet = TRUE),
+    SEBS_grid = sf::st_read(system.file(package = "BeringSeaData", "GIS", "SEBS_grid"), quiet = TRUE),
+    SEBS_boundary = sf::st_read(system.file(package = "BeringSeaData", "GIS", "SEBS_boundary"), quiet = TRUE)
   )
 
 }
@@ -30,7 +30,7 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
 #' @export
 get_ak_coast <- function() {
 
-  sf::st_read(system.file(package = "BeringSeaData", "GIS", "Alaska Shoreline", "ak_russia.shp"))
+  sf::st_read(system.file(package = "BeringSeaData", "GIS", "Alaska_Shoreline", "ak_russia.shp"))
 
 }
 

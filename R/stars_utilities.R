@@ -36,7 +36,7 @@ st_reband <- function(x) {
 #'
 #' @returns A 3-dimensional `stars` object
 #' @export
-st_replicate <- function(x, name, values = 1:2, ...) {
+st_replicate <- function(x, name, values = 1:2) {
 
   if (!(inherits(x, "stars") & length(dim(x)) == 2)) {
     stop("`x` must be a 2-dimensional `stars` object")
@@ -70,7 +70,7 @@ st_replicate <- function(x, name, values = 1:2, ...) {
 
 #' Convert tidync object to `stars`
 #'
-#' @param x tidync object
+#' @param .x tidync object
 #'
 #' @return A `stars` object
 #' @source <https://github.com/ropensci/tidync/issues/68>
@@ -79,13 +79,13 @@ st_replicate <- function(x, name, values = 1:2, ...) {
 #' @method st_as_stars tidync
 #' @aliases st_as_stars
 #' @export
-st_as_stars.tidync <- function(x) {
+st_as_stars.tidync <- function(.x) {
 
   ## ignore unit details for the moment
-  data <- lapply(tidync::hyper_array(x, drop = FALSE),
+  data <- lapply(tidync::hyper_array(.x, drop = FALSE),
                  units::as_units)
   ## this needs to be a bit easier ...
-  transforms <- tidync:::active_axis_transforms(x)
+  transforms <- tidync:::active_axis_transforms(.x)
   dims <- lapply(names(transforms), function(trname) {
     transform <- transforms[[trname]] |> dplyr::filter(selected)
     values <- transform[[trname]]

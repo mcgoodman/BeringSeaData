@@ -110,7 +110,7 @@ write_ncdf <- function(roms, path, type = c("resampled", "native"), cellsize = 5
 
     # Write CRS attributes to netcdf file
     ncdf4::ncatt_put(ncout, projname, "name", projname)
-    ncdf4::ncatt_put(ncout, projname,"grid_mapping_name", projname)
+    ncdf4::ncatt_put(ncout, projname, "grid_mapping_name", projname)
     ncdf4::ncatt_put(ncout, projname, "longitude_of_central_meridian", -171)
     ncdf4::ncatt_put(ncout, projname, "false_easting", 500)
     ncdf4::ncatt_put(ncout, projname, "false_northing", 0)
@@ -120,8 +120,8 @@ write_ncdf <- function(roms, path, type = c("resampled", "native"), cellsize = 5
     ncdf4::ncatt_put(ncout, projname, "longitude_of_prime_meridian", 0)
     ncdf4::ncatt_put(ncout, projname, "semi_major_axis", 6378137)
     ncdf4::ncatt_put(ncout, projname, "inverse_flattening", 298.257223563)
-    ncdf4::ncatt_put(ncout, projname, "spatial_ref", "PROJCS[‘unknown’,GEOGCS[‘unknown’,DATUM[‘WGS_1984’,SPHEROID[‘WGS 84’,6378137,298.257223563],AUTHORITY[‘EPSG’,’6326’]],PRIMEM[‘Greenwich’,0,AUTHORITY[‘EPSG’,’8901’]],UNIT[‘degree’,0.0174532925199433]],PROJECTION[‘Transverse_Mercator’],PARAMETER[‘latitude_of_origin’,0],PARAMETER[‘central_meridian’,-171],PARAMETER[‘scale_factor’,0.9996],PARAMETER[‘false_easting’,500],PARAMETER[‘false_northing’,0],UNIT[‘metre’,1,AUTHORITY[‘EPSG’,’9036’]],AXIS[‘Easting’,EAST],AXIS[‘Northing’,NORTH]]")
-    ncdf4::ncatt_put(ncout, projname, "crs_wkt", "PROJCS[‘unknown’,GEOGCS[‘unknown’,DATUM[‘WGS_1984’,SPHEROID[‘WGS 84’,6378137,298.257223563],AUTHORITY[‘EPSG’,’6326’]],PRIMEM[‘Greenwich’,0,AUTHORITY[‘EPSG’,’8901’]],UNIT[‘degree’,0.0174532925199433]],PROJECTION[‘Transverse_Mercator’],PARAMETER[‘latitude_of_origin’,0],PARAMETER[‘central_meridian’,-171],PARAMETER[‘scale_factor’,0.9996],PARAMETER[‘false_easting’,500],PARAMETER[‘false_northing’,0],UNIT[‘metre’,1,AUTHORITY[‘EPSG’,’9036’]],AXIS[‘Easting’,EAST],AXIS[‘Northing’,NORTH]]")
+    ncdf4::ncatt_put(ncout, projname, "spatial_ref", "PROJCS['unknown',GEOGCS['unknown',DATUM['WGS_1984',SPHEROID['WGS 84',6378137,298.257223563],AUTHORITY['EPSG','6326']],PRIMEM['Greenwich',0,AUTHORITY['EPSG','8901']],UNIT['degree',0.0174532925199433]],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',-171],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500],PARAMETER['false_northing',0],UNIT['metre',1,AUTHORITY['EPSG','9036']],AXIS['Easting',EAST],AXIS['Northing',NORTH]]")
+    ncdf4::ncatt_put(ncout, projname, "crs_wkt", "PROJCS['unknown',GEOGCS['unknown',DATUM['WGS_1984',SPHEROID['WGS 84',6378137,298.257223563],AUTHORITY['EPSG','6326']],PRIMEM['Greenwich',0,AUTHORITY['EPSG','8901']],UNIT['degree',0.0174532925199433]],PROJECTION['Transverse_Mercator'],PARAMETER['latitude_of_origin',0],PARAMETER['central_meridian',-171],PARAMETER['scale_factor',0.9996],PARAMETER['false_easting',500],PARAMETER['false_northing',0],UNIT['metre',1,AUTHORITY['EPSG','9036']],AXIS['Easting',EAST],AXIS['Northing',NORTH]]")
     ncdf4::ncatt_put(ncout, projname, "GeoTransform", "-192.6105578478245 5 0 7461.274939415367 0 -5")
     ncdf4::ncatt_put(ncout, projname, "_CoordinateAxisTypes","GeoX GeoY")
 

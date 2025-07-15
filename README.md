@@ -126,7 +126,7 @@ Plotting, for example, the first week in this dataset:
 
     ggplot() + 
       geom_stars(aes(fill = temp, color = temp), 
-                 data = slice(temp_ssp585, 1, along = "ocean_time")) + 
+                 data = dplyr::slice(temp_ssp585, 1, along = "ocean_time")) + 
       scale_fill_viridis_c(option = "inferno") + 
       scale_color_viridis_c(option = "inferno")
 

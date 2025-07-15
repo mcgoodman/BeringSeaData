@@ -30,11 +30,6 @@ get_level2 <- function(var,
                        crop_ebs = TRUE,
                        write_dir = NA) {
 
-  require("curl")
-  require("dplyr")
-  require("stringr")
-  require("stars")
-
   # Base directory url for Thredds server
   url <- "https://data.pmel.noaa.gov/aclim/thredds"
 
@@ -94,44 +89,44 @@ get_level2 <- function(var,
 
   # Read in rasters, join together
   suppressWarnings(suppressMessages({
-    roms <- read_ncdf(file_names[1], var = var_base)
-    roms_dates <- st_get_dimension_values(roms, "ocean_time")
+    roms <- stars::read_ncdf(file_names[1], var = var_base)
+    roms_dates <- stars::st_get_dimension_values(roms, "ocean_time")
     if (length(file_names) > 1) {
       for (i in 2:length(file_names)) {
-        roms_i <- read_ncdf(file_names[i], var = var_base)
+        roms_i <- stars::read_ncdf(file_names[i], var = var_base)
         roms <- c(roms, roms_i, along = "ocean_time")
-        roms_dates <- c(roms_dates, st_get_dimension_values(roms_i, "ocean_time"))
+        roms_dates <- c(roms_dates, stars::st_get_dimension_values(roms_i, "ocean_time"))
       }
     }
-    st_crs(roms) <- "+proj=longlat +datum=WGS84 +no_defs"
+    sf::st_crs(roms) <- "+proj=longlat +datum=WGS84 +no_defs"
   }))
 
   # Fix issue with `stars` where if first raster is single band, all bands receive same date
-  roms <- st_set_dimensions(roms, "ocean_time", values = roms_dates)
+  roms <- stars::st_set_dimensions(roms, "ocean_time", values = roms_dates)
 
   # Subset time, if applicable
   if(!is.na(start) | !is.na(end)) {
     if (!is.na(start)) {
       start_date <- as.POSIXct(paste0(start, "-01-01 00:00:00"), tz = "UTC")
-      dates_in <- which(st_get_dimension_values(roms, "ocean_time") >= start_date)
-      roms <- roms |> slice(dates_in, along = "ocean_time")
+      dates_in <- which(stars::st_get_dimension_values(roms, "ocean_time") >= start_date)
+      roms <- roms |> dplyr::slice(dates_in, along = "ocean_time")
     }
     if (!is.na(end)) {
       end_date <- as.POSIXct(paste0(end, "-12-31 23:59:00"), tz = "UTC")
-      dates_in <- which(st_get_dimension_values(roms, "ocean_time") <= end_date)
-      roms <- roms |> slice(dates_in, along = "ocean_time")
+      dates_in <- which(stars::st_get_dimension_values(roms, "ocean_time") <= end_date)
+      roms <- roms |> dplyr::slice(dates_in, along = "ocean_time")
     }
   }
 
   # Crop to eastern Bering Sea survey region, if applicable
   if(crop_ebs) {
-    ebs <- get_ebs_shapefile() |> st_transform("+proj=longlat +datum=WGS84") |> st_shift_longitude()
-    roms <- roms |> st_crop(ebs)
+    ebs <- get_ebs_shapefile() |> sf::st_transform("+proj=longlat +datum=WGS84") |> sf::st_shift_longitude()
+    roms <- roms |> sf::st_crop(ebs)
   }
 
   # Write out stars object, if applicable
   if(!is.na(write_dir)) {
-    write_stars(roms, file.path(write_dir, paste0(sim, "_", var, ".tif")), driver = "GTiff")
+    stars::write_stars(roms, file.path(write_dir, paste0(sim, "_", var, ".tif")), driver = "GTiff")
   }
 
   on.exit({
