@@ -36,11 +36,17 @@ st_reband <- function(x) {
 #'
 #' @returns A 3-dimensional `stars` object
 #' @export
-st_replicate <- function(x, name, values = 1, ...) {
+st_replicate <- function(x, name, values = 1:2, ...) {
 
   if (!(inherits(x, "stars") & length(dim(x)) == 2)) {
     stop("`x` must be a 2-dimensional `stars` object")
   }
+
+  if (length(values) <= 1) {
+    stop("`values` must be length 2 or more")
+  }
+
+  if (missing(name)) name <- "z"
 
   xi <- setNames(vector("list", length(names(x))), names(x))
 
@@ -48,8 +54,8 @@ st_replicate <- function(x, name, values = 1, ...) {
 
     xi[[i]] <- setNames(rep(list(x[i]), length(values)), values)
     xi[[i]] <- Reduce("c", xi[[i]])
-    xi[[i]] <- st_redimension(xi[[i]])
-    xi[[i]] <- st_set_dimensions(xi[[i]], which = 3, values = values, names = name)
+    xi[[i]] <- stars::st_redimension(xi[[i]])
+    xi[[i]] <- stars::st_set_dimensions(xi[[i]], which = 3, values = values, names = name)
     names(xi[[i]]) <- names(x)[i]
 
   }
@@ -57,7 +63,7 @@ st_replicate <- function(x, name, values = 1, ...) {
   if (length(xi) > 1) {
     return(Reduce("c", xi))
   } else {
-    return(xi)
+    return(xi[[1]])
   }
 
 }

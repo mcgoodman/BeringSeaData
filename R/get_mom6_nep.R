@@ -57,6 +57,14 @@ get_mom6_nep <- function(
   if (!(nrow(available) > 0)) stop(paste0("specified data category not available for freq = ", freq))
   if (!(var %in% available$cefi_variable)) stop(paste0("specified variable not available freq = ", freq, " and category = ", category))
 
+  if (inherits(target_crs, "crs")) {
+    target_crs <- target_crs$epsg
+  } else if (is.na(target_crs)) {
+    target_crs <- 4326
+  } else if (!inherits(target_crs, c("integer", "numeric"))) {
+    stop("`target_crs` must be of class 'crs' or an integer EPSG code")
+  }
+
   # Subset to requested variable
   available <- available[available$cefi_variable == var,]
 
@@ -167,13 +175,13 @@ get_mom6_nep <- function(
     stars::st_set_dimensions("time", values = var_dates)
 
   # Resample on target CRS, if applicable
-  if (!is.na(target_crs)) {
+  if (target_crs != 4326) {
     nc <- stars::st_warp(nc, crs = target_crs)
   }
 
   # Crop to shapefile extent, if applicable
   if (inherits(extent, "sf")) {
-    if (sf::st_crs(extent) != target_crs) {
+    if (sf::st_crs(extent)$epsg != target_crs) {
       extent <- sf::st_transform(extent, crs = target_crs)
     }
     nc <- nc[extent]
