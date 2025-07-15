@@ -56,10 +56,10 @@ weight_weeks <- function(x, start = NA, end = NA) {
 
     if (i == 1) {
       roms_weekly <- x |> dplyr::slice(weeks, along = "ocean_time") |>
-        stars::st_apply(1:2, weighted.mean, weights = weights, na.rm = TRUE)
+        stars::st_apply(1:2, stats::weighted.mean, weights = weights, na.rm = TRUE)
     } else {
       roms_week <- x |> dplyr::slice(weeks, along = "ocean_time") |>
-        stars::st_apply(1:2, weighted.mean, weights = weights, na.rm = TRUE)
+        stars::st_apply(1:2, stats::weighted.mean, weights = weights, na.rm = TRUE)
       roms_weekly <- c(roms_weekly, roms_week)
     }
 

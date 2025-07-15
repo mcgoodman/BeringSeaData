@@ -8,10 +8,12 @@
 <https://github.com/ropensci/tidync/issues/68>
 }
 \usage{
-\method{st_as_stars}{tidync}(.x)
+\method{st_as_stars}{tidync}(.x, ...)
 }
 \arguments{
 \item{.x}{tidync object}
+
+\item{...}{ignored}
 }
 \value{
 A `stars` object

@@ -89,7 +89,7 @@ get_species_codes <- function(sciname) {
   if (missing(sciname)) {
     return(species_data)
   } else {
-    setNames(species_data$species_code[match(sciname, species_data$scientific_name)], sciname)
+    stats::setNames(species_data$species_code[match(sciname, species_data$scientific_name)], sciname)
   }
 
 }

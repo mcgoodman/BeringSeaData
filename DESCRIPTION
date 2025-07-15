@@ -4,27 +4,27 @@ Title: Download and bias-correct Bering10K ROMS level 2 outputs
 Version: 0.2.0
 Author: Maurice Goodman
 Maintainer: Maurice Goodman <goodman.maurice@gmail.com>
-Description: Query the ACLIM Thredds server for spatially-gridded ("level 2") ROMS outputs
-License: What license is it under?
+Description: Query and process data from the Bering Sea GAP survey, MOM6 model, and ROMS model.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RdMacros: Rdpack
 Depends:
     R (>= 4.1.0),
-    sf, 
     stars
 Imports:
+    sf, 
     curl,
     dplyr,
     lubridate,
     Rdpack,
     rvest,
-    stringr, 
     ncdf4,
     tidync,
     jsonlite, 
     httr, 
-    units
+    units, 
+    stats
 RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0)

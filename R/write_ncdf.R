@@ -16,7 +16,7 @@ write_ncdf <- function(roms, path, type = c("resampled", "native"), cellsize = 5
 
     B10K_grid <- ncdf4::nc_open(system.file(package = "BeringSeaData", "GIS", "Bering10K_extended_grid.nc"))
 
-    roms_xy <- dplyr::mutate(setNames(roms[,,,1,drop = TRUE], "var"), var = 1)
+    roms_xy <- dplyr::mutate(stats::setNames(roms[,,,1,drop = TRUE], "var"), var = 1)
     coords <- suppressWarnings(sf::st_coordinates(sf::st_centroid(sf::st_as_sf(roms_xy))))
 
     # Time dimension
@@ -36,7 +36,7 @@ write_ncdf <- function(roms, path, type = c("resampled", "native"), cellsize = 5
     lat <- ncdf4::ncvar_def("lat_rho", units = "degree_north", list(xi_rho, eta_rho), longname = "latitude of RHO-points")
 
     # Variable definitions
-    var_defs <- setNames(vector("list", length(vars)), vars)
+    var_defs <- stats::setNames(vector("list", length(vars)), vars)
     for (i in seq_along(vars)) {
       var_defs[[vars[i]]] <- ncdf4::ncvar_def(vars[i], units = "", list(xi_rho, eta_rho, time), missval = NA)
     }
@@ -84,7 +84,7 @@ write_ncdf <- function(roms, path, type = c("resampled", "native"), cellsize = 5
     time <- ncdf4::ncdim_def("time", units = time_units, dates)
 
     # Variable definitions
-    var_defs <- setNames(vector("list", length(vars)), vars)
+    var_defs <- stats::setNames(vector("list", length(vars)), vars)
     for (i in seq_along(vars)) {
       var_defs[[vars[i]]] <- ncdf4::ncvar_def(vars[i], units = "", list(x, y, time), missval = NA)
     }

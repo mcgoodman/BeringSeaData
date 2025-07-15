@@ -48,11 +48,11 @@ st_replicate <- function(x, name, values = 1:2) {
 
   if (missing(name)) name <- "z"
 
-  xi <- setNames(vector("list", length(names(x))), names(x))
+  xi <- stats::setNames(vector("list", length(names(x))), names(x))
 
   for (i in seq_along(names(x))) {
 
-    xi[[i]] <- setNames(rep(list(x[i]), length(values)), values)
+    xi[[i]] <- stats::setNames(rep(list(x[i]), length(values)), values)
     xi[[i]] <- Reduce("c", xi[[i]])
     xi[[i]] <- stars::st_redimension(xi[[i]])
     xi[[i]] <- stars::st_set_dimensions(xi[[i]], which = 3, values = values, names = name)
@@ -71,6 +71,7 @@ st_replicate <- function(x, name, values = 1:2) {
 #' Convert tidync object to `stars`
 #'
 #' @param .x tidync object
+#' @param ... ignored
 #'
 #' @return A `stars` object
 #' @source <https://github.com/ropensci/tidync/issues/68>
@@ -79,7 +80,7 @@ st_replicate <- function(x, name, values = 1:2) {
 #' @method st_as_stars tidync
 #' @aliases st_as_stars
 #' @export
-st_as_stars.tidync <- function(.x) {
+st_as_stars.tidync <- function(.x, ...) {
 
   ## ignore unit details for the moment
   data <- lapply(tidync::hyper_array(.x, drop = FALSE),

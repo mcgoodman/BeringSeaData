@@ -24,7 +24,7 @@ list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = T
 
     if (!is.na(sims)) dirs <- dirs[dirs %in% sims]
 
-    dirlist <- setNames(vector("list", length(dirs)), dirs)
+    dirlist <- stats::setNames(vector("list", length(dirs)), dirs)
 
     for (i in seq_along(dirs)) {
 
@@ -36,7 +36,7 @@ list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = T
       subdirs <- html[grepl(dirs[i], html, fixed = TRUE) & !grepl("file:", html, fixed = TRUE)]
       subdirs <- basename(dirname(subdirs))
 
-      dirlist[[i]] <- setNames(vector("list", length(subdirs)), subdirs)
+      dirlist[[i]] <- stats::setNames(vector("list", length(subdirs)), subdirs)
 
       for (j in seq_along(subdirs)) {
 
