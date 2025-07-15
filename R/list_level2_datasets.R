@@ -14,12 +14,9 @@ list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = T
 
   option <- match.arg(option)
 
-  require("rvest")
-  require("dplyr")
-
   url <- "https://data.pmel.noaa.gov/aclim/thredds/catalog/"
 
-  html <- read_html(paste0(url, "files.html")) |> html_elements("a") |> html_attr("href")
+  html <- rvest::read_html(paste0(url, "files.html")) |> rvest::html_elements("a") |> rvest::html_attr("href")
   dirs <- html[grepl("files/", html, fixed = TRUE)]
   dirs <- gsub("files/", "", gsub(".html", "", dirs, fixed = TRUE), fixed = TRUE)
 
@@ -35,7 +32,7 @@ list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = T
 
       dir_url <- paste0(url, "files/", dirs[i], "/Level2.html")
 
-      html <- read_html(dir_url) |> html_nodes("a") |> html_attr("href")
+      html <- rvest::read_html(dir_url) |> rvest::html_nodes("a") |> rvest::html_attr("href")
       subdirs <- html[grepl(dirs[i], html, fixed = TRUE) & !grepl("file:", html, fixed = TRUE)]
       subdirs <- basename(dirname(subdirs))
 
@@ -45,7 +42,7 @@ list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = T
 
         subdir_url <- paste0(url, dirs[i], "/Level2/", subdirs[j], "/catalog.html")
 
-        html <- read_html(subdir_url) |> html_nodes("a") |> html_attr("href")
+        html <- rvest::read_html(subdir_url) |> rvest::html_nodes("a") |> rvest::html_attr("href")
         datasets <- html[grepl("dataset=", html, fixed = TRUE)]
         varnames <- gsub(paste0(dirs[i], "_", subdirs[j], "_"), "", basename(datasets))
         varnames <- gsub("average_", "", gsub(".nc", "", varnames[grepl(".nc", varnames, fixed = TRUE)], fixed = TRUE), fixed = TRUE)
@@ -59,7 +56,7 @@ list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = T
 
     }
 
-    varlist <- bind_rows(lapply(dirlist, bind_rows, .id = "years"), .id = "sim")
+    varlist <- dplyr::bind_rows(lapply(dirlist, dplyr::bind_rows, .id = "years"), .id = "sim")
 
     return(varlist)
 

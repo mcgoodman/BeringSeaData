@@ -8,11 +8,13 @@
 #' @export
 st_reband <- function(x) {
 
-  require("dplyr")
+  if (!(inherits(x, "stars") & length(dim(x)) == 3)) {
+    stop("`x` must be a 3-dimensional `stars` object")
+  }
 
   x_list <- vector("list", dim(x)[3])
 
-  band_names <- st_get_dimension_values(x, 3)
+  band_names <- stars::st_get_dimension_values(x, 3)
 
   for (i in 1:(dim(x)[3])) {
 

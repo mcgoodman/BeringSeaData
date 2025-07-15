@@ -10,27 +10,24 @@
 #' @export
 weight_weeks <- function(x, start = NA, end = NA) {
 
-  require("stars")
-  require("lubridate")
-
   # Subset time, if applicable
   if(!is.na(start) | !is.na(end)) {
     if (!is.na(start)) {
       if(!(start == as.integer(start))) stop("start should be an integer year")
       start_date <- as.POSIXct(paste0(start, "-01-01 00:00:00"), tz = "UTC")
-      dates_in <- which(st_get_dimension_values(x, "ocean_time") >= start_date)
+      dates_in <- which(stars::st_get_dimension_values(x, "ocean_time") >= start_date)
       x <- x |> slice(dates_in, along = "ocean_time")
     }
     if (!is.na(end)) {
       if(!(end == as.integer(end))) stop("end should be an integer year")
       end_date <- as.POSIXct(paste0(end, "-12-31 23:59:00"), tz = "UTC")
-      dates_in <- which(st_get_dimension_values(x, "ocean_time") <= end_date)
+      dates_in <- which(stars::st_get_dimension_values(x, "ocean_time") <= end_date)
       x <- x |> slice(dates_in, along = "ocean_time")
     }
   }
 
   # Extract dates from raster
-  days <- as.Date(st_get_dimension_values(x, "ocean_time"))
+  days <- as.Date(stars::st_get_dimension_values(x, "ocean_time"))
 
   # Matrix to hold distance between raster dates and week-of-year midpoints
   roms_weights <- matrix(NA_real_, nrow = length(days), ncol = 52)
@@ -39,11 +36,11 @@ weight_weeks <- function(x, start = NA, end = NA) {
   for (i in 1:length(days)) {
 
     # Midpoints for corresponding year
-    wk_mdpts <- seq(as.Date(paste0(year(days[i]), "-01-04")), by = "week", length.out = 52)
+    wk_mdpts <- seq(as.Date(paste0(lubridate::year(days[i]), "-01-04")), by = "week", length.out = 52)
 
     # Handle special cases - e.g. distance from January dates to week 52 of last year
-    if(month(days)[i] == 1) wk_mdpts[52] <- seq(as.Date(paste0(year(days[i]) - 1, "-01-04")), by = "week", length.out = 52)[52]
-    if(month(days)[i] == 12) wk_mdpts[1] <- as.Date(paste0(year(days[i]) + 1, "-01-04"))
+    if(lubridate::month(days)[i] == 1) wk_mdpts[52] <- seq(as.Date(paste0(lubridate::year(days[i]) - 1, "-01-04")), by = "week", length.out = 52)[52]
+    if(lubridate::month(days)[i] == 12) wk_mdpts[1] <- as.Date(paste0(lubridate::year(days[i]) + 1, "-01-04"))
 
     # Distance between raster layer date and week midpoints (>7 days set to zero)
     roms_weights[i,] <- pmax(1 - abs((days[i] - wk_mdpts) / 7), 0)
@@ -58,18 +55,18 @@ weight_weeks <- function(x, start = NA, end = NA) {
     weights <- roms_weights[weeks,i]
 
     if (i == 1) {
-      roms_weekly <- x |> slice(weeks, along = "ocean_time") |>
-        st_apply(1:2, weighted.mean, weights = weights, na.rm = TRUE)
+      roms_weekly <- x |> dplyr::slice(weeks, along = "ocean_time") |>
+        stars::st_apply(1:2, weighted.mean, weights = weights, na.rm = TRUE)
     } else {
-      roms_week <- x |> slice(weeks, along = "ocean_time") |>
-        st_apply(1:2, weighted.mean, weights = weights, na.rm = TRUE)
+      roms_week <- x |> dplyr::slice(weeks, along = "ocean_time") |>
+        stars::st_apply(1:2, weighted.mean, weights = weights, na.rm = TRUE)
       roms_weekly <- c(roms_weekly, roms_week)
     }
 
   }
 
   # Set time dimension to week-of-year
-  roms_weekly <- roms_weekly |> merge(name = "week") |> st_set_dimensions("week", values = 1:52)
+  roms_weekly <- roms_weekly |> merge(name = "week") |> stars::st_set_dimensions("week", values = 1:52)
 
   # Format names and units and return
   names(roms_weekly) <- names(x)
@@ -90,17 +87,14 @@ weight_weeks <- function(x, start = NA, end = NA) {
 #' @export
 delta_correct <- function(x, hindcast, historical, lower = NA, upper = NA) {
 
-  require("stars")
-  require("lubridate")
-
-  days <- as.Date(st_get_dimension_values(x, "ocean_time"))
+  days <- as.Date(stars::st_get_dimension_values(x, "ocean_time"))
 
   for (i in 1:length(days)) {
 
     # Midpoints for corresponding year
-    wk_mdpts <- seq(as.Date(paste0(year(days[i]), "-01-04")), by = "week", length.out = 52)
-    if(month(days)[i] == 1) wk_mdpts[52] <- seq(as.Date(paste0(year(days[i]) - 1, "-01-04")), by = "week", length.out = 52)[52]
-    if(month(days)[i] == 12) wk_mdpts[1] <- as.Date(paste0(year(days[i]) + 1, "-01-04"))
+    wk_mdpts <- seq(as.Date(paste0(lubridate::year(days[i]), "-01-04")), by = "week", length.out = 52)
+    if(lubridate::month(days)[i] == 1) wk_mdpts[52] <- seq(as.Date(paste0(lubridate::year(days[i]) - 1, "-01-04")), by = "week", length.out = 52)[52]
+    if(lubridate::month(days)[i] == 12) wk_mdpts[1] <- as.Date(paste0(lubridate::year(days[i]) + 1, "-01-04"))
 
     # Week bin corresponding to date
     wk_bin <- which.min(abs(wk_mdpts - days[i]))
@@ -116,7 +110,7 @@ delta_correct <- function(x, hindcast, historical, lower = NA, upper = NA) {
   }
 
   # Set dimensions and attributes
-  bc_rast <- bc_rast |> merge(name = "ocean_time") |> st_set_dimensions("ocean_time", days)
+  bc_rast <- bc_rast |> merge(name = "ocean_time") |> stars::st_set_dimensions("ocean_time", days)
   names(bc_rast) <- names(x)
 
   # Deal with bounds
