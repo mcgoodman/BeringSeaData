@@ -4,7 +4,10 @@
 \alias{get_ak_coast}
 \title{Alakska coastline shapefile}
 \usage{
-get_ak_coast()
+get_ak_coast(res = c("medium", "high"))
+}
+\arguments{
+\item{res}{resolution ("medium" or "high")}
 }
 \value{
 An "sf" object

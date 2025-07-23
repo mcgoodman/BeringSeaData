@@ -26,11 +26,18 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
 
 
 #' @title Alakska coastline shapefile
+#'
+#' @param res resolution ("medium" or "high")
 #' @return An "sf" object
 #' @export
-get_ak_coast <- function() {
+get_ak_coast <- function(res = c("medium", "high")) {
 
-  sf::st_read(system.file(package = "BeringSeaData", "GIS", "Alaska_Shoreline", "ak_russia.shp"))
+  res <- match.arg(res)
+
+  res |> switch(
+    high = sf::st_read(system.file(package = "BeringSeaData", "GIS", "Alaska_Shoreline", "ak_russia.shp")),
+    medium = sf::st_read(system.file(package = "BeringSeaData", "GIS", "Alaska_Shoreline", "ak_russia_medium.shp"))
+  )
 
 }
 
@@ -40,7 +47,9 @@ get_ak_coast <- function() {
 #' @export
 get_bathymetry <- function() {
 
-  stars::read_stars(system.file(package = "BeringSeaData", "GIS", "etopo_bedrock_15arcsecond.tif"))
+  out <- stars::read_stars(system.file(package = "BeringSeaData", "GIS", "etopo_bedrock_15arcsecond.tif"))
+  names(out) <- "depth_m"
+  out
 
 }
 
@@ -50,8 +59,9 @@ get_bathymetry <- function() {
 get_sediment <- function() {
 
   phi <- stars::read_stars(system.file(package = "BeringSeaData", "GIS", "phi.grd"))
-
-  phi |> st_warp(crs = "+proj=longlat +datum=WGS84 +no_defs")
+  phi <- phi |> st_warp(crs = "+proj=longlat +datum=WGS84 +no_defs")
+  names(phi) <- "phi"
+  phi
 
 }
 
