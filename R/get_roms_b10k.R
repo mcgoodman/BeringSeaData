@@ -71,8 +71,8 @@ get_roms_b10k <- function(var,
   sim_urls <- paste0(url, "/fileServer/", sim, "/Level2/", sim_dirs, "/", sim, "_", sim_dirs, "_average_", var, ".nc")
 
   # Download data
-  dir.create(tmp <- tempdir())
-  dir.create(save_dir <- paste(tmp, sim, sep = "/"))
+  dir.create(tmp <- tempdir(), showWarnings = FALSE)
+  dir.create(save_dir <- paste(tmp, sim, sep = "/"), showWarnings = FALSE)
   file_names <- paste0(save_dir, "/", var, "_", sim_dirs, ".nc")
   for (i in 1:length(sim_urls)) {
     tryCatch(
@@ -121,7 +121,7 @@ get_roms_b10k <- function(var,
   # Crop to eastern Bering Sea survey region, if applicable
   if(crop_ebs) {
     ebs <- get_ebs_shapefile() |> sf::st_transform("+proj=longlat +datum=WGS84") |> sf::st_shift_longitude()
-    roms <- roms |> sf::st_crop(ebs)
+    suppressWarnings(roms <- roms |> sf::st_crop(ebs))
   }
 
   # Write out stars object, if applicable
@@ -129,6 +129,7 @@ get_roms_b10k <- function(var,
     stars::write_stars(roms, file.path(write_dir, paste0(sim, "_", var, ".tif")), driver = "GTiff")
   }
 
+  # Clear contents of temporary directory
   on.exit({
     unlink(tmp, recursive = TRUE, force = TRUE)
     dir.create(tmp)
