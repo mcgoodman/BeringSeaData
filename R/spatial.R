@@ -25,7 +25,7 @@ get_ebs_shapefile <- function(region = c("EBS", "SEBS"), type = c("boundary", "g
 }
 
 
-#' @title Alakska coastline shapefile
+#' @title Alaska coastline shapefile
 #'
 #' @param res resolution ("medium" or "high")
 #' @return An "sf" object

@@ -7,7 +7,7 @@
 delta_correct(x, hindcast, historical, lower = NA, upper = NA)
 }
 \arguments{
-\item{x}{ROMS level 2 `stars` object returned by `get_level2`}
+\item{x}{ROMS level 2 `stars` object returned by `get_roms_b10k`}
 
 \item{hindcast}{Weekly means for ROMS level 2 hindcast, returned by `weight_weekly`}
 

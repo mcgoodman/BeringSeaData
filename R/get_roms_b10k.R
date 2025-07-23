@@ -20,7 +20,7 @@
 #' @importFrom Rdpack reprompt
 #' @return A `stars` object
 #' @export
-get_level2 <- function(var,
+get_roms_b10k <- function(var,
                        type = c("hindcast", "projection", "historical"),
                        scenario = c("SSP126", "SSP585", "RCP45", "RCP85"),
                        start = NA,

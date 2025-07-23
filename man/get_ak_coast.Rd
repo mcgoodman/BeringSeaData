@@ -2,7 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{get_ak_coast}
 \alias{get_ak_coast}
-\title{Alakska coastline shapefile}
+\title{Alaska coastline shapefile}
 \usage{
 get_ak_coast(res = c("medium", "high"))
 }
@@ -13,5 +13,5 @@ get_ak_coast(res = c("medium", "high"))
 An "sf" object
 }
 \description{
-Alakska coastline shapefile
+Alaska coastline shapefile
 }

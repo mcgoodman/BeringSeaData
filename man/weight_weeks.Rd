@@ -7,7 +7,7 @@
 weight_weeks(x, start = NA, end = NA)
 }
 \arguments{
-\item{x}{A multiband `stars` object returned by `get_level2`}
+\item{x}{A multiband `stars` object returned by `get_roms_b10k`}
 
 \item{start}{integer start year. NA defaults to all available years.}
 

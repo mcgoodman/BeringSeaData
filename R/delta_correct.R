@@ -2,7 +2,7 @@
 
 #' Compute week-of-year means for ROMS output
 #'
-#' @param x A multiband `stars` object returned by `get_level2`
+#' @param x A multiband `stars` object returned by `get_roms_b10k`
 #' @param start integer start year. NA defaults to all available years.
 #' @param end integer end year. NA defaults to all available years.
 #'
@@ -77,7 +77,7 @@ weight_weeks <- function(x, start = NA, end = NA) {
 
 #' Delta-correct ROMS level 2 outputs
 #'
-#' @param x ROMS level 2 `stars` object returned by `get_level2`
+#' @param x ROMS level 2 `stars` object returned by `get_roms_b10k`
 #' @param hindcast Weekly means for ROMS level 2 hindcast, returned by `weight_weekly`
 #' @param historical Weekly means for ROMS level 2 historical run, returned by `weight_weekly`
 #' @param lower If applicable, lower threshold for returned variable

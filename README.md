@@ -76,23 +76,23 @@ The result is a 3-dimensional `stars` object with a band for each month:
 ## Bering 10K ROMS model
 
 This package also implements functions for browsing, downloading from,
-and bias-corrected outputs from the [NOAA ACLIM Thredds
+and bias-correcting outputs from the [NOAA ACLIM Thredds
 Server](https://data.pmel.noaa.gov/aclim/thredds/catalog/catalog.html)
 containing hindcasts, future projections, and historical runs of the the
 [Bering10K
 ROMS](https://beringnpz.github.io/roms-bering-sea/B10K-dataset-docs/)
 models for the Bering Sea. Browse available datasets and variables by
-visiting the Thredds Server or using `list_level2_datasets`.
+visiting the Thredds Server or using `list_roms_datasets`.
 
 ### Downloading Level 2 ROMs output
 
-The `get_level2` function can be used to download weekly gridded outputs
-as `stars` objects. E.g., to download SSP5-8.5 projections of bottom
-temperature for 2040-2060 from the GFDL earth systems model:
+The `get_roms_b10k` function can be used to download weekly gridded
+outputs as `stars` objects. E.g., to download SSP5-8.5 projections of
+bottom temperature for 2040-2060 from the GFDL earth systems model:
 
     var <- "temp_bottom5m"
 
-    temp_ssp585 <- get_level2(
+    temp_ssp585 <- get_roms_b10k(
       var, start = 2040, end = 2060, 
       type = "projection", scenario = "SSP585", earth_model = "GFDL"
     )
@@ -142,8 +142,8 @@ also need to download a hindcast and historical run for a reference time
 period, e.g:
 
     # Download hindcast and historical
-    temp_hind <- get_level2(var, type = "hindcast", start = 2000, end = 2020)
-    temp_hist <- get_level2(var, type = "historical", start = 2000, end = 2020, earth_model = "GFDL")
+    temp_hind <- get_roms_b10k(var, type = "hindcast", start = 2000, end = 2020)
+    temp_hist <- get_roms_b10k(var, type = "historical", start = 2000, end = 2020, earth_model = "GFDL")
 
     # Delta-correct
     temp_ssp585_bc <- temp_ssp585 |> delta_correct(hindcast = temp_hind, historical = temp_hist)
@@ -200,7 +200,7 @@ We may therefore want to set a floor:
 
 We can list all available simulations on the Thredds server with:
 
-    list_level2_datasets(option = "sims")
+    list_roms_datasets(option = "sims")
 
     ##  [1] "B10K-H16_CMIP5_CESM_BIO_rcp85"      "B10K-H16_CMIP5_CESM_rcp85"         
     ##  [3] "B10K-H16_CMIP5_CESM_rcp45"          "B10K-H16_CMIP5_GFDL_BIO_rcp85"     
@@ -217,7 +217,7 @@ We can list all available simulations on the Thredds server with:
 For a given simulation, all available years and variables can be
 returned with, e.g.:
 
-    datasets <- list_level2_datasets(option = "all", sim = "B10K-K20P19_CMIP6_gfdl_ssp585")
+    datasets <- list_roms_datasets(option = "all", sim = "B10K-K20P19_CMIP6_gfdl_ssp585")
 
     # This is typically a large data frame
     head(datasets[,c("sim", "years", "var")])

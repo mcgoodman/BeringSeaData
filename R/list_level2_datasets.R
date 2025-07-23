@@ -1,5 +1,5 @@
 
-#' List simulations / datasets available on the thredds server
+#' List level-2 ROMS Bering 10K simulations / datasets available on the Thredds server
 #'
 #' @param option Whether to list simulations ("sims") or all available years / variables for a given
 #' simulation ("all"). If using `option = "all"` with `sims = NA`, it may take a long time to query the
@@ -10,7 +10,7 @@
 #'
 #' @return Either a vector of simulation names for `option = "sims"` or a data frame for `option = "all"`
 #' @export
-list_level2_datasets <- function(option = c("sims", "all"), sims = NA, quiet = TRUE) {
+list_roms_datasets <- function(option = c("sims", "all"), sims = NA, quiet = TRUE) {
 
   option <- match.arg(option)
 

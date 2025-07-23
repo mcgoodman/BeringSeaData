@@ -40,11 +40,11 @@ check_availability <- function(var,
     projection =  paste0("B10K-", paste(version, cmip, earth_model, scenario, sep = "_"))
   )
 
-  datasets <- list_level2_datasets(option = "sims")
+  datasets <- list_roms_datasets(option = "sims")
 
-  if (!(sim %in% datasets)) stop("specified combination of dataset type, scenario, version, and earth model does not exist. Use `list_level2_datasets(type = 'sim') to show available datasets.`")
+  if (!(sim %in% datasets)) stop("specified combination of dataset type, scenario, version, and earth model does not exist. Use `list_roms_datasets(type = 'sim') to show available datasets.`")
 
-  var_yrs <- list_level2_datasets(option = "all", sims = sim, quiet = TRUE)
+  var_yrs <- list_roms_datasets(option = "all", sims = sim, quiet = TRUE)
 
   if (!(var %in% var_yrs$var)) {
     stop(paste(
