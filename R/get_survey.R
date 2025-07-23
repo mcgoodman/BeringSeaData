@@ -121,7 +121,10 @@ get_catch <- function(species_code, zero_expand = FALSE, haul_data, survey = c("
     "GOA" = "GOA"
   )
 
-  if (isTRUE(zero_expand)) {
+  # Because returned catch data only has haul join identifiers (and no zero catches),
+  # need to obtain haul data (or filter provided haul data) for zero expansion or
+  # for filtering catch to selected surveys and/or or year ranges
+  if (isTRUE(zero_expand) | survey != "All" | !missing(years)) {
     if (missing(haul_data)) {
       haul_data <- get_hauldata(survey = survey)
     } else {
@@ -136,6 +139,9 @@ get_catch <- function(species_code, zero_expand = FALSE, haul_data, survey = c("
 
   catch_data <- data.frame()
 
+  # Can only request 10,000 rows at a time
+  # Filtering by species is done here by providing a species code in the query,
+  # while filtering by survey and years is applied to the returned data.
   for (i in seq(0, 500000, 10000)) {
 
     url <- paste0(api_link_catch, "?q={\"species_code\":", species_code, "}&offset=", i, "&limit=10000")
@@ -152,21 +158,29 @@ get_catch <- function(species_code, zero_expand = FALSE, haul_data, survey = c("
 
   }
 
-  if (!isTRUE(zero_expand)) {
-    if (!missing(years)) {
-      warning("`years` argument ignored if haul data is missing.")
-    }
-    return(catch_data)
-  }
 
-  catch_data <- haul_data |>
-    dplyr::rename(station_id = station) |>
-    dplyr::left_join(catch_data, by = "hauljoin") |>
-    dplyr::mutate(across(
-      c(cpue_kgkm2, cpue_nokm2, weight_kg, count),
-      \(x) ifelse(is.na(x), 0, x)
-    )) |>
-    dplyr::arrange(year, station_id)
+  if (isTRUE(zero_expand)) {
+
+    # If zero-expanding, bind catch data to haul data and fill in implicit zeroes
+    # Filtering of surveys / years is handled by left-joining to haul_data, which
+    # already does not contain those surveys / years
+    catch_data <- haul_data |>
+      dplyr::rename(station_id = station) |>
+      dplyr::left_join(catch_data, by = "hauljoin") |>
+      dplyr::mutate(across(
+        c(cpue_kgkm2, cpue_nokm2, weight_kg, count),
+        \(x) ifelse(is.na(x), 0, x)
+      )) |>
+      dplyr::arrange(year, station_id)
+
+  } else if (!isTRUE(zero_expand) & (!missing(years) | survey != "All")) {
+
+    # If filtering to specific surveys or years, but not zero-expanding,
+    # simply match the haul join column to those in the (already filtered) the haul data
+    # and remove rows whose hauls do not correspond to those surveys / years
+    catch_data <- catch_data[catch_data$hauljoin %in% haul_data$hauljoin,]
+
+  }
 
   return(catch_data)
 
