@@ -158,6 +158,12 @@ get_catch <- function(species_code, zero_expand = FALSE, haul_data, survey = c("
 
   }
 
+  if (!nrow(catch_data)) {
+
+    warning("No catch data: AFSC GAP API may be unavailable.")
+    return(data.frame())
+
+  }
 
   if (isTRUE(zero_expand)) {
 
