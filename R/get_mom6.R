@@ -571,6 +571,7 @@ get_mom6_raw <- function(
   
   # Convert to stars
   nc <- stats::setNames(nc, var)
+  coords[, , "lon"] <- rotate_lon(coords[, , "lon"], from = "0/360")
   nc <- stars::st_as_stars(nc, curvilinear = stats::setNames(asplit(coords, 3), dims))
   sf::st_crs(nc) <- sf::st_crs(4326)
   
