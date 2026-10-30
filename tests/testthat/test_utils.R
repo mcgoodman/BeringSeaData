@@ -8,9 +8,13 @@ test_that(
 
     expect_equal(dim(phi2), c(dim(phi), year = 2))
 
+    phi3d <- st_replicate(phi2, name = "season", values = 1:3)
+
+    expect_equal(dim(phi3d), c(dim(phi2), season = 3))
+
     expect_error(
-      st_replicate(phi2, name = "year", values = 1:2),
-      "`x` must be a 2-dimensional `stars` object"
+      st_replicate(as.matrix(1:10), name = "year", values = 1:2),
+      "`x` must be a `stars` object"
     )
 
     expect_error(

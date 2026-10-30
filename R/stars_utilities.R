@@ -45,18 +45,18 @@ st_reband <- function(x) {
 }
 
 
-#' Expand a 2-dimensional `stars` object over time
+#' Expand a `stars` object across a new dimension
 #'
-#' @param x 2-dimensional `stars` object
-#' @param name Name of time dimension
-#' @param values Values to use for time dimension
+#' @param x A `stars` object
+#' @param name Name of new dimension
+#' @param values Values to use for new dimension
 #'
-#' @returns A 3-dimensional `stars` object
+#' @returns A `stars` object with an additional dimension
 #' @export
 st_replicate <- function(x, name, values = 1:2) {
 
-  if (!(inherits(x, "stars") & length(dim(x)) == 2)) {
-    stop("`x` must be a 2-dimensional `stars` object")
+  if (!inherits(x, "stars")) {
+    stop("`x` must be a `stars` object")
   }
 
   if (length(values) <= 1) {
@@ -65,22 +65,8 @@ st_replicate <- function(x, name, values = 1:2) {
 
   if (missing(name)) name <- "z"
 
-  xi <- stats::setNames(vector("list", length(names(x))), names(x))
+  along_arg <- stats::setNames(list(values), name)
 
-  for (i in seq_along(names(x))) {
-
-    xi[[i]] <- stats::setNames(rep(list(x[i]), length(values)), values)
-    xi[[i]] <- Reduce("c", xi[[i]])
-    xi[[i]] <- stars::st_redimension(xi[[i]])
-    xi[[i]] <- stars::st_set_dimensions(xi[[i]], which = 3, values = values, names = name)
-    names(xi[[i]]) <- names(x)[i]
-
-  }
-
-  if (length(xi) > 1) {
-    return(Reduce("c", xi))
-  } else {
-    return(xi[[1]])
-  }
+  do.call(c, c(rep(list(x), length(values)), list(along = along_arg)))
 
 }

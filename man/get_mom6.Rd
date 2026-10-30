@@ -3,6 +3,15 @@
 \name{get_mom6}
 \alias{get_mom6}
 \title{Download gridded estimates from CEFI MOM6 experiments}
+\source{
+\strong{MOM6-NEP model description:} Drenkard, E. J., Stock, C. A., Ross, A. C., Teng, Y.-C., Cordero, T., Cheng, W., Adcroft, A., Curchitser, E., Dussin, R., Hallberg, R., Hauri, C., Hedstrom, K., Hermann, A., Jacox, M. G., Kearney, K. A., Pagès, R., Pilcher, D. J., Pozo Buil, M., Seelanki, V. and Zadeh, N. 2025. A regional physical–biogeochemical ocean model for marine resource applications in the Northeast Pacific (MOM6-COBALT-NEP10k v1.0). - Geoscientific Model Development 18: 5245–5290.
+
+\strong{Skill assessment of MOM6-NEP for the Bering Sea region:} Seelanki, V., Cheng, W., Stabeno, P. J., Hermann, A. J., Drenkard, E. J., Stock, C. A. and Hedstrom, K. 2025. Evaluation of a coupled ocean and sea-ice model (MOM6-NEP10k) over the Bering Sea and its sensitivity to turbulence decay scales. - Geoscientific Model Development 18: 7681–7705.
+
+\strong{Seasonal forecasts from MOM6-NEP:} Jacox, M., Dukhovskoy, D., Liu, J., Alexander, M., Drenkard, E., Ross, A., Freeman, N., Amaya, D., Bograd, S., Cluett, A., Lovenduski, N., Mogen, S., Pozo Buil, M., Stock, C., Cheng, W., Hermann, A., Jia, L., Johnson, N., Kearney, K., McHugh, C. and Pilcher, D. 2026. Seasonal forecasts of Northeast Pacific physics and biogeochemistry using MOM6-COBALT-NEP10k. - EGUsphere 2026: 1–29.
+
+\strong{Comparison of COBALT (the biogeochemical model coupled to MOM6-NEP) with other biogeochemical models for the Bering Sea:} Kearney, K. A., Cheng, W. and Hermann, A. J. 2025. A biogeochemical model intercomparison for the eastern Bering Sea shelf. in press.
+}
 \usage{
 get_mom6(
   var = "tob",
@@ -19,8 +28,8 @@ get_mom6(
 )
 }
 \arguments{
-\item{var}{variable name. See [CEFI portal](https://psl.noaa.gov/cefi_portal/) or use
-`list_mom6()` for options.}
+\item{var}{variable name. See \href{https://psl.noaa.gov/cefi_portal/}{CEFI portal} or use
+\code{\link{list_mom6}()} for options.}
 
 \item{freq}{"monthly" or "daily"}
 
@@ -28,34 +37,35 @@ get_mom6(
 
 \item{region}{CEFI region. "NEP" for Northeast Pacific or "NWA" for Northwest Atlantic.}
 
-\item{experiment}{CEFI experiment. Defaults to "hindcast".}
+\item{experiment}{CEFI experiment. Only "hindcast" is currently supported; forecast
+experiments ("forecast", "reforecast", "decadal_forecast") return an error.}
 
 \item{release}{release code. If NA, returns latest available release.}
 
 \item{extent}{Either (1) a shapefile from which to compute the extent,
-(2) a bounding box created using `sf::st_bbox()` with accompanying CRS,
+(2) a bounding box created using \code{\link[sf:st_bbox]{sf::st_bbox()}} with accompanying CRS,
 or (3) NA for the full MOM6 grid. If a shapefile is provided, it will be
 used to mask (crop) the output prior to returning. NULL defaults to
 to the NOAA AFSC EBS (including NBS) survey region for NEP, and full domain for NWA.}
 
 \item{start_date}{Initial date to query data for. If frequency = "monthly",
 only years and months of provided date is used, date of month is ignored.
-If NA, all available dates are returned. Can be NA even if `end_date` is provided.}
+If NA, all available dates are returned. Can be NA even if \code{end_date} is provided.}
 
 \item{end_date}{Final date to query data for. If frequency = "monthly",
 only years and months of provided date is used, date of month is ignored.
-If NA, all available dates are returned. Can be NA even if `start_date` is provided.}
+If NA, all available dates are returned. Can be NA even if \code{start_date} is provided.}
 
 \item{category}{(optional) data category; should not be required unless the same variable name
-is used in multiple categories. See [CEFI portal](https://psl.noaa.gov/cefi_portal/) or use
-`list_mom6()` for options.}
+is used in multiple categories. See \href{https://psl.noaa.gov/cefi_portal/}{CEFI portal} or use
+\code{\link{list_mom6}()} for options.}
 
 \item{chunk}{Time interval to chunk requests by (e.g., "10 years"); "none" for no chunking.
 Using no chunks may result in request hitting server data limits; using too many chunks 
-may result in hitting server rate limits. Accepts any string that `seq.Date` can parse.}
+may result in hitting server rate limits. Accepts any string that \code{\link[base]{seq.Date}} can parse.}
 }
 \value{
-A `stars` object
+A \code{stars} object
 }
 \description{
 Download gridded estimates from CEFI MOM6 experiments

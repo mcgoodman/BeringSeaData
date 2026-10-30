@@ -109,8 +109,51 @@ test_that(
       "Specified date range is invalid"
     )
 
+    expect_error(
+      get_mom6(region = "NWA", experiment = "forecast"),
+      "not currently supported"
+    )
+
   }
 )
+
+test_that("Empty OPeNDAP bands are caught", {
+
+  # Valid data: land cells (first row) are NA in every time step
+  good <- array(as.numeric(1:36), dim = c(x = 3, y = 4, time = 3))
+  good[1, , ] <- NA
+
+  # Valid all-zero ocean (e.g., ice-free summer) keeps the land mask
+  ice_free <- good
+  ice_free[2:3, , 2] <- 0
+
+  # Failed transfer: trailing time steps fully zero-filled, including land
+  failed <- good
+  failed[, , 3] <- 0
+
+  # Truncated transfer: zero-filling starts partway through a time step
+  truncated <- good
+  truncated[, 3:4, 3] <- 0
+
+  # Fully failed request: no NA cells anywhere
+  all_failed <- array(0, dim = c(x = 3, y = 4, time = 3))
+
+  # Additional non-spatial dimension (e.g., ice thickness category)
+  with_ct <- array(rep(good, 2), dim = c(x = 3, y = 4, time = 3, ct = 2)) |> aperm(c(1, 2, 4, 3))
+  with_ct_failed <- with_ct
+  with_ct_failed[, , 2, 3] <- 0
+
+  expect_silent(check_opendap_bands(stars::st_as_stars(good)))
+  expect_silent(check_opendap_bands(stars::st_as_stars(ice_free)))
+  expect_silent(check_opendap_bands(stars::st_as_stars(good[, , 1])))
+  expect_silent(check_opendap_bands(stars::st_as_stars(with_ct)))
+  expect_error(check_opendap_bands(stars::st_as_stars(failed)), "1 of 3 time steps")
+  expect_error(check_opendap_bands(stars::st_as_stars(truncated)), "1 of 3 time steps")
+  expect_error(check_opendap_bands(stars::st_as_stars(all_failed)), "3 of 3 time steps")
+  expect_error(check_opendap_bands(stars::st_as_stars(all_failed[, , 1])), "opendap errors")
+  expect_error(check_opendap_bands(stars::st_as_stars(with_ct_failed)), "1 of 3 time steps")
+
+})
 
 test_that("Chunked retrieval works", {
 

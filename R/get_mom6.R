@@ -21,10 +21,16 @@ cefi_variable_lists <- data.frame(
 #' @return The result of the expression if successful
 #' @noRd
 with_retries <- function(expr, max_attempts = 5, base_sleep = 2) {
+
+  # Capture the unevaluated expression so each attempt re-evaluates it in the caller's
+  # environment (re-forcing a failed promise instead warns "restarting interrupted promise evaluation")
+  expr <- substitute(expr)
+  env <- parent.frame()
+
   attempt <- 1
   while (attempt <= max_attempts) {
     result <- tryCatch(
-      expr,
+      eval(expr, envir = env),
       error = function(e) e
     )
     
@@ -42,6 +48,59 @@ with_retries <- function(expr, max_attempts = 5, base_sleep = 2) {
     
     attempt <- attempt + 1
   }
+}
+
+#' Confirm no OPeNDAP errors in a queried MOM6 \code{stars} object
+#'
+#' Failed or truncated OPeNDAP transfers (e.g., requests exceeding server data limits)
+#' do not raise an R error; the netCDF library prints a message (e.g., "DAP DATADDS packet
+#' is apparently too short") and returns the untransferred portion of the array as zeros.
+#' Land cells are NA in every valid time step and the land mask is static, so slices with
+#' fewer NA cells than the rest have been zero-filled. Checking for all-zero bands instead
+#' would flag valid data (e.g., ice concentration in ice-free summer months).
+#'
+#' @param x A \code{stars} object returned from a MOM6 query, with spatial dimensions first
+#'   and time (if present) last
+#'
+#' @return \code{x}, invisibly, if no zero-filled slices are found
+#' @noRd
+check_opendap_bands <- function(x) {
+
+  values <- x[[1]]
+  slice_dims <- seq_along(dim(values))[-(1:2)]
+
+  # Number of NA cells in each non-spatial slice (e.g., time, or ice category x time)
+  if (length(slice_dims) > 0) {
+    n_na <- apply(values, slice_dims, \(y) sum(is.na(y)))
+  } else {
+    n_na <- sum(is.na(values))
+  }
+  bad <- n_na < max(n_na)
+
+  # A fully failed request (or a single failed time step) leaves no NA cells anywhere;
+  # extents with no land cannot be checked this way
+  if (max(n_na) == 0 && all(values == 0)) bad[] <- TRUE
+
+  if (any(bad)) {
+
+    # Summarize by time step (last dimension) for the error message
+    if (length(slice_dims) > 0) {
+      bad_time <- apply(array(bad, dim = dim(values)[slice_dims]), length(slice_dims), any)
+    } else {
+      bad_time <- bad
+    }
+    time_vals <- if ("time" %in% names(dim(x))) stars::st_get_dimension_values(x, "time") else NULL
+    first_bad <- if (is.null(time_vals)) "" else paste0(" (first: ", format(time_vals[which(bad_time)[1]]), ")")
+
+    stop(paste0(
+      "get_mom6 encountered opendap errors: ", sum(bad_time), " of ", length(bad_time),
+      " time steps were returned zero-filled", first_bad, ". Try a smaller request or use `chunk`."
+    ))
+
+  }
+
+  invisible(x)
+
 }
 
 #' List available CEFI MOM6 datasets
@@ -84,32 +143,37 @@ list_mom6 <- function(
 
 #' Download gridded estimates from CEFI MOM6 experiments
 #'
-#' @param var variable name. See [CEFI portal](https://psl.noaa.gov/cefi_portal/) or use
-#'   `list_mom6()` for options.
+#' @param var variable name. See \href{https://psl.noaa.gov/cefi_portal/}{CEFI portal} or use
+#'   \code{\link{list_mom6}()} for options.
 #' @param freq "monthly" or "daily"
 #' @param grid_type "regrid" or "raw". Regridded data is on a regular grid, while raw data is on the model's native curvilinear grid.
 #' @param region CEFI region. "NEP" for Northeast Pacific or "NWA" for Northwest Atlantic.
-#' @param experiment CEFI experiment. Defaults to "hindcast".
+#' @param experiment CEFI experiment. Only "hindcast" is currently supported; forecast
+#'   experiments ("forecast", "reforecast", "decadal_forecast") return an error.
 #' @param release release code. If NA, returns latest available release.
 #' @param extent Either (1) a shapefile from which to compute the extent,
-#'  (2) a bounding box created using `sf::st_bbox()` with accompanying CRS,
+#'  (2) a bounding box created using \code{\link[sf:st_bbox]{sf::st_bbox()}} with accompanying CRS,
 #'  or (3) NA for the full MOM6 grid. If a shapefile is provided, it will be
 #'  used to mask (crop) the output prior to returning. NULL defaults to
 #'  to the NOAA AFSC EBS (including NBS) survey region for NEP, and full domain for NWA.
 #' @param start_date Initial date to query data for. If frequency = "monthly",
 #'   only years and months of provided date is used, date of month is ignored.
-#'   If NA, all available dates are returned. Can be NA even if `end_date` is provided.
+#'   If NA, all available dates are returned. Can be NA even if \code{end_date} is provided.
 #' @param end_date Final date to query data for. If frequency = "monthly",
 #'   only years and months of provided date is used, date of month is ignored.
-#'   If NA, all available dates are returned. Can be NA even if `start_date` is provided.
+#'   If NA, all available dates are returned. Can be NA even if \code{start_date} is provided.
 #' @param category (optional) data category; should not be required unless the same variable name
-#'   is used in multiple categories. See [CEFI portal](https://psl.noaa.gov/cefi_portal/) or use
-#'   `list_mom6()` for options.
+#'   is used in multiple categories. See \href{https://psl.noaa.gov/cefi_portal/}{CEFI portal} or use
+#'   \code{\link{list_mom6}()} for options.
 #' @param chunk Time interval to chunk requests by (e.g., "10 years"); "none" for no chunking.
 #'   Using no chunks may result in request hitting server data limits; using too many chunks 
-#'   may result in hitting server rate limits. Accepts any string that `seq.Date` can parse.
+#'   may result in hitting server rate limits. Accepts any string that \code{\link[base]{seq.Date}} can parse.
 #'
-#' @return A `stars` object
+#' @return A \code{stars} object
+#' @source \strong{MOM6-NEP model description:} Drenkard, E. J., Stock, C. A., Ross, A. C., Teng, Y.-C., Cordero, T., Cheng, W., Adcroft, A., Curchitser, E., Dussin, R., Hallberg, R., Hauri, C., Hedstrom, K., Hermann, A., Jacox, M. G., Kearney, K. A., Pagès, R., Pilcher, D. J., Pozo Buil, M., Seelanki, V. and Zadeh, N. 2025. A regional physical–biogeochemical ocean model for marine resource applications in the Northeast Pacific (MOM6-COBALT-NEP10k v1.0). - Geoscientific Model Development 18: 5245–5290.
+#' @source \strong{Skill assessment of MOM6-NEP for the Bering Sea region:} Seelanki, V., Cheng, W., Stabeno, P. J., Hermann, A. J., Drenkard, E. J., Stock, C. A. and Hedstrom, K. 2025. Evaluation of a coupled ocean and sea-ice model (MOM6-NEP10k) over the Bering Sea and its sensitivity to turbulence decay scales. - Geoscientific Model Development 18: 7681–7705.
+#' @source \strong{Seasonal forecasts from MOM6-NEP:} Jacox, M., Dukhovskoy, D., Liu, J., Alexander, M., Drenkard, E., Ross, A., Freeman, N., Amaya, D., Bograd, S., Cluett, A., Lovenduski, N., Mogen, S., Pozo Buil, M., Stock, C., Cheng, W., Hermann, A., Jia, L., Johnson, N., Kearney, K., McHugh, C. and Pilcher, D. 2026. Seasonal forecasts of Northeast Pacific physics and biogeochemistry using MOM6-COBALT-NEP10k. - EGUsphere 2026: 1–29.
+#' @source \strong{Comparison of COBALT (the biogeochemical model coupled to MOM6-NEP) with other biogeochemical models for the Bering Sea:} Kearney, K. A., Cheng, W. and Hermann, A. J. 2025. A biogeochemical model intercomparison for the eastern Bering Sea shelf. in press.
 #' @export
 #'
 get_mom6 <- function(
@@ -130,7 +194,16 @@ get_mom6 <- function(
   region <- match.arg(region)
   experiment <- match.arg(experiment)
   freq <- match.arg(freq)
-  
+
+  # Forecast products store one file per initialization with lead x member dimensions and
+  # no time axis, which is not yet supported
+  if (experiment != "hindcast") {
+    stop(paste0(
+      "experiment = \"", experiment, "\" is not currently supported by get_mom6; only \"hindcast\" is available. ",
+      "See https://psl.noaa.gov/cefi_portal/ for forecast products."
+    ))
+  }
+
   # Default to EBS survey region if requesting NEP data
   if (is.null(extent)) {
     if (region == "NEP") {
@@ -342,7 +415,10 @@ get_mom6_regrid <- function(
   if (length(dim(nc)) == 3) nc <- stars::st_set_dimensions(nc, which = 3, values = var_dates, names = "time")
   nc <- stars::st_set_dimensions(nc, xy = c("lon", "lat"))
   sf::st_crs(nc) <- sf::st_crs(4326)
-  
+
+  # Confirm no opendap errors
+  check_opendap_bands(nc)
+
   # Crop to shapefile extent, if applicable
   if (inherits(extent, "sf")) {
     if (sf::st_crs(extent) != sf::st_crs(nc)) {
@@ -574,7 +650,10 @@ get_mom6_raw <- function(
   coords[, , "lon"] <- rotate_lon(coords[, , "lon"], from = "0/360")
   nc <- stars::st_as_stars(nc, curvilinear = stats::setNames(asplit(coords, 3), dims))
   sf::st_crs(nc) <- sf::st_crs(4326)
-  
+
+  # Confirm no opendap errors
+  check_opendap_bands(nc)
+
   # Crop to shapefile extent, if applicable
   if (inherits(extent, c("sf", "sfc"))) {
     if (sf::st_crs(extent) != sf::st_crs(nc)) {

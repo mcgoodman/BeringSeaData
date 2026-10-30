@@ -2,20 +2,20 @@
 % Please edit documentation in R/stars_utilities.R
 \name{st_replicate}
 \alias{st_replicate}
-\title{Expand a 2-dimensional `stars` object over time}
+\title{Expand a `stars` object across a new dimension}
 \usage{
 st_replicate(x, name, values = 1:2)
 }
 \arguments{
-\item{x}{2-dimensional `stars` object}
+\item{x}{A `stars` object}
 
-\item{name}{Name of time dimension}
+\item{name}{Name of new dimension}
 
-\item{values}{Values to use for time dimension}
+\item{values}{Values to use for new dimension}
 }
 \value{
-A 3-dimensional `stars` object
+A `stars` object with an additional dimension
 }
 \description{
-Expand a 2-dimensional `stars` object over time
+Expand a `stars` object across a new dimension
 }
